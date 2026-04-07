@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fictional Ops Dashboard — Training Use Only</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0f1117;
+      color: #e2e8f0;
+      font-family: 'Courier New', monospace;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+    .container { max-width: 860px; margin: 0 auto; }
+
+    .fictional-banner {
+      background: #3d2e00;
+      color: #f5c542;
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      padding: 7px 14px;
+      border-radius: 6px;
+      letter-spacing: 0.09em;
+      margin-bottom: 1.5rem;
+      border: 1px solid #f5c54240;
+    }
+
+    .ops-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .ops-title { font-size: 20px; font-weight: 600; color: #e2e8f0; letter-spacing: 0.05em; }
+    .ops-subtitle { font-size: 12px; color: #64748b; margin-top: 3px; }
+    .status-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 6px;
+      background: #3b0a0a;
+      color: #f87171;
+      border: 1px solid #f8717140;
+      letter-spacing: 0.07em;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 1.5rem;
+    }
+    .metric-card {
+      background: #1e2535;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+    .metric-label { font-size: 11px; color: #64748b; margin-bottom: 6px; letter-spacing: 0.06em; }
+    .metric-value { font-size: 22px; font-weight: 600; color: #e2e8f0; }
+    .metric-sub { font-size: 11px; color: #475569; margin-top: 4px; }
+
+    .alert-box {
+      background: #1f0808;
+      border: 1px solid #f8717140;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 1.5rem;
+    }
+    .alert-header { font-size: 11px; font-weight: 600; color: #f87171; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .alert-body { font-size: 13px; color: #cbd5e1; line-height: 1.6; }
+    .serial-highlight { font-weight: 700; color: #f87171; }
+
+    .section-title { font-size: 11px; font-weight: 600; color: #475569; letter-spacing: 0.09em; margin: 0 0 10px; }
+
+    .unit-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1.5rem; }
+    .unit-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #1e2535;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 12px 16px;
+    }
+    .unit-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+    .dot-standby { background: #f59e0b; box-shadow: 0 0 6px #f59e0b80; }
+    .dot-pending { background: #475569; }
+    .unit-name { font-size: 13px; font-weight: 600; color: #e2e8f0; flex: 1; }
+    .unit-platform { font-size: 11px; color: #64748b; min-width: 100px; }
+    .unit-status { font-size: 11px; padding: 3px 10px; border-radius: 5px; }
+    .s-standby { background: #3d2e00; color: #f5c542; }
+    .s-pending { background: #1e293b; color: #64748b; }
+
+    .log-list {
+      font-size: 12px;
+      color: #475569;
+      line-height: 2.2;
+      border-top: 1px solid #1e2535;
+      padding-top: 12px;
+    }
+    .log-time { color: #334155; margin-right: 10px; }
+    .log-msg { color: #94a3b8; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="fictional-banner">FICTIONAL / TRAINING USE ONLY — All data, units, and operations depicted are entirely simulated</div>
+
+  <div class="ops-header">
+    <div>
+      <div class="ops-title">Operations Dashboard</div>
+      <div class="ops-subtitle">Command &amp; Control — Simulation Environment</div>
+    </div>
+    <div class="status-badge">PENDING ACTIVATION</div>
+  </div>
+
+  <div class="grid-4">
+    <div class="metric-card">
+      <div class="metric-label">Serial No.</div>
+      <div class="metric-value" style="font-size:15px; padding-top:4px;">SN-2025-00471</div>
+      <div class="metric-sub">Tonight's op</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Units on standby</div>
+      <div class="metric-value">4</div>
+      <div class="metric-sub">across platforms</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Op window</div>
+      <div class="metric-value" style="font-size:17px; padding-top:4px;" id="countdown">—</div>
+      <div class="metric-sub">simulation time</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Platform detail</div>
+      <div class="metric-value" style="font-size:15px; padding-top:4px;">TBD</div>
+      <div class="metric-sub">pending brief</div>
+    </div>
+  </div>
+
+  <div class="alert-box">
+    <div class="alert-header">ALERT — IMMEDIATE ACTIVATION REQUESTED</div>
+    <div class="alert-body">Request activation of serial <span class="serial-highlight">SN-2025-00471</span>. All units associated with this serial must remain active and on standby across designated platforms. Additional platform details will be provided shortly.</div>
+  </div>
+
+  <p class="section-title">Unit status</p>
+  <div class="unit-list">
+    <div class="unit-row"><div class="unit-dot dot-standby"></div><div class="unit-name">Unit ALPHA-01</div><div class="unit-platform">MAT-20251-A</div><div class="unit-status s-standby">Standby</div></div>
+    <div class="unit-row"><div class="unit-dot dot-standby"></div><div class="unit-name">Unit BRAVO-07</div><div class="unit-platform">MAT-20257-B</div><div class="unit-status s-standby">Standby</div></div>
+    <div class="unit-row"><div class="unit-dot dot-pending"></div><div class="unit-name">Unit CHARLIE-12</div><div class="unit-platform">MAT-20312-C</div><div class="unit-status s-pending">Awaiting brief</div></div>
+    <div class="unit-row"><div class="unit-dot dot-pending"></div><div class="unit-name">Unit DELTA-03</div><div class="unit-platform">MAT-20303-D</div><div class="unit-status s-pending">Awaiting brief</div></div>
+  </div>
+
+  <div class="log-list">
+    <div><span class="log-time" id="t1">—</span><span class="log-msg">Dashboard initialised — simulation mode active</span></div>
+    <div><span class="log-time" id="t2">—</span><span class="log-msg">Serial SN-2025-00471 registered — activation pending</span></div>
+    <div><span class="log-time" id="t3">—</span><span class="log-msg">Units ALPHA-01 [MAT-20251-A], BRAVO-07 [MAT-20257-B] set to standby</span></div>
+    <div><span class="log-time" id="t4">—</span><span class="log-msg">Awaiting platform details for CHARLIE-12, DELTA-03</span></div>
+  </div>
+
+</div>
+<script>
+  function pad(n){return String(n).padStart(2,'0');}
+  function fmt(d){return pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());}
+  const now = new Date();
+  document.getElementById('t1').textContent = fmt(new Date(now-18000));
+  document.getElementById('t2').textContent = fmt(new Date(now-12000));
+  document.getElementById('t3').textContent = fmt(new Date(now-7000));
+  document.getElementById('t4').textContent = fmt(new Date(now-2000));
+  function tick(){
+    const n = new Date();
+    const h = 23-n.getHours(), m = 59-n.getMinutes(), s = 59-n.getSeconds();
+    document.getElementById('countdown').textContent = pad(h)+':'+pad(m)+':'+pad(s);
+  }
+  tick(); setInterval(tick,1000);
+</script>
+</body>
+</html>
